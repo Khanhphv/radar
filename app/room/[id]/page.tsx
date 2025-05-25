@@ -4,7 +4,7 @@ import { Metadata } from "next";
 import { useEffect, useState } from "react";
 
 const getData = async (id: string) => {
-  const data = await fetch(`https://others.atwship.net/api/room/${id}`, {
+  const data = await fetch(`https://others.atwship.net/room/${id}`, {
     cache: "no-store",
     headers: {
       Accept: "application/json",
@@ -25,5 +25,5 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
     fetchData();
   }, []);
 
-  return <Room room={roomId} />;
+  return roomId && <Room room={roomId} />;
 }
