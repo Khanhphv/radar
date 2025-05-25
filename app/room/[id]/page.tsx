@@ -1,13 +1,10 @@
+"use client";
 import Room from "@/components/pages/room";
 import { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Login",
-  description: "Login",
-};
+import { useEffect, useState } from "react";
 
 const getData = async (id: string) => {
-  const data = await fetch(`${process.env.DOMAIN_URL}/api/room/get?id=${id}`, {
+  const data = await fetch(`https://others.atwship.net/api/room/${id}`, {
     cache: "no-store",
     headers: {
       Accept: "application/json",
@@ -18,15 +15,15 @@ const getData = async (id: string) => {
   return res;
 };
 
-export default async function Page({
-  params: { id },
-}: {
-  params: { id: string };
-}) {
-  const data = await getData(id);
-  if (data.id) {
-    return <Room room={id} />;
-  } else {
-    return <h2>Link is expired</h2>;
-  }
+export default function Page({ params: { id } }: { params: { id: string } }) {
+  const [roomId, setRoomId] = useState<any>(null);
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getData(id);
+      setRoomId(data.id);
+    };
+    fetchData();
+  }, []);
+
+  return <Room room={roomId} />;
 }
