@@ -6,10 +6,25 @@
       integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ=="
       crossorigin="anonymous"
     ></script>
+  </head>
 
+  <body>
+    Satus:
+    <span id="status-display"></span>
+    <br />
+    <input name="room" type="text" placeholder="room" />
+    <br />
+    <br />
+
+    <button onclick="joinRoom()">Join Room</button>
+    <br />
+    <br />
+
+    <button onclick="onMessage()">Send</button>
+    <button onclick="disconnect()">Disconnect</button>
     <script>
-      var roomId = "54eb6e49-1d02-4cf9-ace5-5820a9f5774d";
-
+      var room;
+      const statusDisplay = document.getElementById("status-display");
       var socket = io("https://others.atwship.net", {
         withCredentials: false,
         cors: {
@@ -26,8 +41,9 @@
 
       socket.on("connect", function () {
         console.log("Connected");
+        statusDisplay.innerHTML = "Connected";
         socket.emit("join_room", {
-          room: roomId,
+          room: room,
         });
       });
 
@@ -75,26 +91,22 @@
          * Send data through room_event
          * With data is string and room is room id
          */
-        socket.emit("room_event", { data: points, room: roomId });
-      };
-
-      const close_room = () => {
-        socket.emit("close_room", {
-          room: roomId,
-        });
+        socket.emit("room_event", { data: points, room: room });
       };
 
       const disconnect = () => {
-        close_room();
-        socket.emit("disconnect_request");
+        socket.emit("room_event", { data: "disconnect", room: room });
+        room = null;
+      };
+
+      const joinRoom = () => {
+        const roomId = document.getElementsByName("room")[0].value;
+        room = roomId;
+        statusDisplay.innerHTML = "Joining room " + roomId;
+        socket.emit("join_room", {
+          room: room,
+        });
       };
     </script>
-  </head>
-
-  <body>
-    <input name="message" type="text" />
-
-    <button onclick="onMessage()">Send</button>
-    <button onclick="disconnect()">Disconnect</button>
   </body>
 </html>

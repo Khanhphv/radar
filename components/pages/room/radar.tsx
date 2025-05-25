@@ -83,6 +83,9 @@ export default function Radar({ room }: { room: string }) {
         setPoints(data.data);
       }
     });
+    socket.on("disconnect", function (data, callback) {
+      console.log("disconnected");
+    });
   }, [socket, setPoints]);
 
   useEffect(() => {
